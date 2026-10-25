@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Popcorn Panel (test)</title>
+<style>
+:root{--bg:#14161F;--ink:#ECE6D8;--mute:#8F93A6;--card:#1C1F2B;--line:#2F3447;--acc:#F2C14E;--acc-ink:#14161F;--teal:#7FD1B9;--red:#E4572E;
+color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+main{max-width:560px;margin:0 auto;padding:28px 20px 48px}
+h1{font-size:2.4rem;font-weight:800;line-height:1.05;margin:0 0 6px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 26px}
+fieldset{border:0;padding:0;margin:0 0 20px}
+legend{font-weight:600;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;padding:9px 15px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.btn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.row{display:flex;gap:10px;margin-top:8px}
+.btn{font:inherit;font-weight:600;padding:14px 20px;border-radius:14px;border:0;cursor:pointer}
+.go{background:var(--acc);color:var(--acc-ink);flex:1}
+.rnd{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#out{margin-top:28px}
+.film{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:22px}
+.film h2{font-size:1.9rem;font-weight:800;line-height:1.1;margin:0 0 8px;letter-spacing:-.01em}
+.meta{color:var(--mute);margin:0 0 14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.tag{font-size:.85rem;padding:3px 10px;border-radius:8px;background:var(--bg);color:var(--teal);font-weight:600}
+.again{background:var(--ink);color:var(--bg);width:100%}
+.empty{color:var(--mute);padding:18px 0}
+.tabs{display:flex;gap:8px;margin-bottom:24px}
+.grp{margin-bottom:20px}.grp h3{font-size:1rem;margin:0 0 8px;color:var(--mute);font-weight:600}
+.grp .chip{font-size:.9rem;padding:7px 12px}
+#sum{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+#ask{width:100%;margin-top:10px}
+#aiout{margin-top:24px}
+#aiout h3{font-size:1.1rem;margin:0 0 10px}
+#aiout .film{padding:16px;margin-bottom:10px}
+#aiout .film h2{font-size:1.3rem;margin:0 0 4px}
+#aiout .meta{margin:0}
+.tag.match{background:var(--acc);color:var(--acc-ink)}
+#sfilter{margin-bottom:14px}
+#sooncards .film{padding:14px 16px;margin-bottom:10px}
+#sooncards .film h2{font-size:1.2rem;margin:0 0 4px}
+#sooncards .meta{margin:0 0 10px}
+#sooncards .tags{margin:0}
+.note{color:var(--mute);font-size:.9rem;margin:0 0 16px}
+@media (prefers-reduced-motion:no-preference){.film{animation:pop .25s ease-out}@keyframes pop{from{transform:scale(.97);opacity:.4}to{transform:none;opacity:1}}}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px}
+h1{font-size:2rem}
+.ver{color:var(--mute);font-size:.78rem;margin:0 0 4px}
+.logo{font-size:2.2rem;font-weight:800;line-height:1;margin:0;letter-spacing:-.02em}
+.bar{height:8px;margin:10px 0 18px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--red) 0 14px,#F4ECD8 14px 28px)}
+legend{color:var(--mute)}
+legend::before{content:"> ";color:var(--acc)}
+.chip{border-radius:4px}
+.chip::before{content:"○ ";color:var(--mute)}
+.chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.chip[aria-pressed="true"]::before{content:"● ";color:var(--acc-ink)}
+.tabs{flex-wrap:wrap;gap:4px 16px;margin-bottom:22px}
+.tabs .chip{border:0;border-bottom:2px solid var(--line);border-radius:0;background:transparent;color:var(--mute);padding:6px 0}
+.tabs .chip::before{content:none}
+.tabs .chip[aria-pressed="true"]{background:transparent;color:var(--acc);border-bottom-color:var(--acc)}
+.btn{border-radius:4px}
+.go{box-shadow:3px 3px 0 var(--red)}
+.film{border-radius:6px;border-left:6px solid var(--red)}
+.tag{border-radius:3px;font-size:.78rem}
+.foot{margin-top:36px;color:var(--mute);font-size:.78rem}
+
+.logorow{display:flex;justify-content:space-between;align-items:flex-end}
+.gear{font:inherit;background:none;border:1.5px solid var(--line);color:var(--mute);border-radius:4px;padding:4px 10px;cursor:pointer}
+.panel{border:1.5px dashed var(--line);border-radius:6px;padding:16px;margin-bottom:22px}
+.panel h3{margin:0 0 6px;font-size:1rem}
+input{font:inherit;width:100%;padding:10px;border-radius:4px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);margin-bottom:10px}
+.mv{display:flex;gap:14px;padding:14px;margin-bottom:10px}
+.mv img{width:84px;height:126px;object-fit:cover;border-radius:3px;flex:none;background:var(--line)}
+.mb{min-width:0}
+.mv h2{font-size:1.15rem;margin:0 0 4px}
+.mv .meta{margin:0 0 8px}
+.mv .tags{margin:0 0 8px}
+.ov{margin:0;color:var(--mute);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pc{padding:0;border:2px solid var(--line);background:var(--card);border-radius:4px;color:var(--ink);font:inherit;cursor:pointer;text-align:left;overflow:hidden}
+.pc img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:var(--line)}
+.pc span{display:block;padding:6px;font-size:.72rem}
+.pc[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+#out .again{margin-top:12px}
+summary{cursor:pointer;font-weight:700}
+details[open] summary{margin-bottom:12px}
+.meta.no{color:var(--teal)}
+</style>
+</head>
+<body>
+<main>
+<header><p class="ver">popcorn_panel v0.6 test — bygget for selverklærte filmkritikere</p><div class="logorow"><p class="logo">Popcorn Panel</p><button class="gear" id="gear" aria-label="TMDB-nøkkel">⚙</button></div><div class="bar"></div></header>
+<section id="set" class="panel" hidden><h3>TMDB-nøkkel</h3>
+<p class="note">Lim inn «API Read Access Token» fra themoviedb.org (Innstillinger → API). Den lagres bare i nettleseren din, ikke i filen.</p>
+<input id="key" type="password" autocomplete="off" placeholder="eyJ…">
+<div class="row"><button class="btn go" id="savekey">Lagre</button><button class="btn rnd" id="clearkey">Fjern</button></div>
+<p class="note" id="keymsg"></p></section>
+<nav class="tabs"><button class="chip" id="t-find" aria-pressed="true">Pick my poison</button><button class="chip" id="t-cut" aria-pressed="false">Director’s cut</button><button class="chip" id="t-radar" aria-pressed="false">Radar and release</button></nav>
+
+<section id="find">
+<h1>Pick my poison</h1>
+<p class="sub">Velg sjanger, så velger panelet for deg. Ingen garanti for at du blir enig.</p>
+<fieldset id="gen"><legend>Hvilken sjanger har du lyst på?</legend><div class="chips"><button class="chip" data-g="28">Action</button><button class="chip" data-g="35">Komedie</button><button class="chip" data-g="18">Drama</button><button class="chip" data-g="53">Thriller</button><button class="chip" data-g="27">Skrekk</button><button class="chip" data-g="878">Sci-fi</button><button class="chip" data-g="14">Fantasy</button><button class="chip" data-g="10749">Romantikk</button><button class="chip" data-g="16">Animasjon</button><button class="chip" data-g="80">Krim</button><button class="chip" data-g="12">Eventyr</button><button class="chip" data-g="9648">Mysterium</button><button class="chip" data-g="10751">Familie</button><button class="chip" data-g="99">Dokumentar</button></div></fieldset>
+<p class="note">Velg en eller flere. Velger du ingen, er alt lov.</p>
+<fieldset id="mood"><legend>Hva vil du føle?</legend><div class="chips"><button class="chip" data-m="grine">Ugly cry</button><button class="chip" data-m="skremt">Scared shitless</button><button class="chip" data-m="twist">Plot twist</button><button class="chip" data-m="kos">Kos</button><button class="chip" data-m="spenning">Rein adrenalin</button></div></fieldset>
+<fieldset id="svc"><legend>Bare på tjenestene mine</legend><div class="chips" id="svcchips"><span class="note">Lagre nøkkelen under ⚙ for å hente tjenester.</span></div></fieldset>
+<div class="row"><button class="btn go" id="go">Finn film</button><button class="btn rnd" id="rnd">Overrask meg</button></div>
+<div id="out" aria-live="polite"></div>
+</section>
+
+<section id="cut" hidden>
+<h1>Director’s cut</h1>
+<p id="sum" class="sub"></p>
+<details id="mine" class="panel"><summary id="minesum">Din samling</summary><div id="minegrid" class="grid"></div></details>
+<div class="row"><input id="q" type="search" placeholder="Søk etter en film du liker" style="margin:0"><button class="btn rnd" id="qgo">Søk</button></div>
+<div id="grid" class="grid"></div>
+</section>
+
+<section id="radar" hidden>
+<h1>Radar and release</h1>
+<p class="note" id="rnote"></p>
+<div id="rreg" class="chips" style="margin-bottom:10px"><button class="chip" data-r="NO" aria-pressed="true">Norge</button><button class="chip" data-r="US" aria-pressed="false">USA / internasjonalt</button></div>
+<div id="rfilter" class="chips"><button class="chip" data-f="kino" aria-pressed="true">Kino</button><button class="chip" data-f="strøm" aria-pressed="false">Strømming</button><button class="chip" data-f="plan" aria-pressed="false">Planlagt</button></div>
+<div id="rcards" style="margin-top:14px"></div>
+</section>
+
+<p class="foot">popcorn_panel<br>Filmdata fra TMDB, strømmedata fra JustWatch. Denne siden bruker TMDB API, men er ikke godkjent eller sertifisert av TMDB.</p>
+</main>
+<script>
+var $=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var IMG="https://image.tmdb.org/t/p/";
+var G={28:"Action",12:"Eventyr",16:"Animasjon",35:"Komedie",80:"Krim",99:"Dokumentar",18:"Drama",10751:"Familie",14:"Fantasy",36:"Historie",27:"Skrekk",10402:"Musikk",9648:"Mysterium",10749:"Romantikk",878:"Sci-fi",53:"Thriller",10752:"Krig",37:"Western"};
+var MOOD={kos:"35|10749|10751",latter:"35",spenning:"53|28|27|9648",ettertanke:"18|878|36",eventyr:"12|14|878"};
+var WG={alene:[18,53,878],partner:[10749,35,18],venner:[35,28,12,27],familie:[10751,16,12]};
+var MN=["jan","feb","mar","apr","mai","jun","jul","aug","sep","okt","nov","des"];
+function ls(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var tok=ls("tok",""),liked=ls("liked",{}),sel=[],shown={},rf="kino",rr="NO";
+
+function api(path,p){
+  if(!tok)return Promise.reject({code:"nokey"});
+  var u=new URL("https://api.themoviedb.org/3"+path),h={accept:"application/json"};
+  p=Object.assign({language:"nb-NO"},p||{});
+  Object.keys(p).forEach(function(k){u.searchParams.set(k,p[k])});
+  if(tok.length<60)u.searchParams.set("api_key",tok);else h.Authorization="Bearer "+tok;
+  return fetch(u,{headers:h}).then(function(r){if(!r.ok)throw{code:r.status};return r.json()});
+}
+function err(e){
+  var c=e&&e.code;
+  return c==="nokey"?"Legg inn TMDB-nøkkelen din først (⚙ øverst til høyre).":c===401?"TMDB avviste nøkkelen. Sjekk at du har limt inn hele nøkkelen.":"Fikk ikke kontakt med TMDB. Prøv igjen om litt.";
+}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function plus(n){var d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function nb(d){if(!d)return"Dato ikke satt";var p=d.split("-");return +p[2]+". "+MN[+p[1]-1]+(+p[0]!==new Date().getFullYear()?" "+p[0]:"")}
+function profile(){var g={},n=0;Object.keys(liked).forEach(function(k){n++;(liked[k].g||[]).forEach(function(x){g[x]=(g[x]||0)+1})});return{g:g,n:n}}
+function fit(m,p){return(m.genre_ids||[]).reduce(function(s,x){return s+(p.g[x]||0)},0)}
+function poster(m){return m.poster_path?IMG+"w185"+m.poster_path:""}
+
+function card(m,x){
+  var p=profile(),d=el("div","film mv");
+  if(m.poster_path){var i=el("img");i.src=poster(m);i.alt="";i.loading="lazy";d.appendChild(i)}
+  var b=el("div","mb"),t=el("div","tags");
+  b.appendChild(el("h2",null,m.title));
+  b.appendChild(el("p","meta",(x?"":nb(m.release_date)+(m.vote_average?" · ":""))+(m.vote_average?"★ "+m.vote_average.toFixed(1):"")));
+  (m.genre_ids||[]).slice(0,3).forEach(function(x){if(G[x])t.appendChild(el("span","tag",G[x]))});
+  if(p.n&&fit(m,p)>0)t.appendChild(el("span","tag match","Passer smaken din"));
+  b.appendChild(t);
+  if(m.overview)b.appendChild(el("p","ov",m.overview.length>150?m.overview.slice(0,147)+"…":m.overview));
+  d.appendChild(b);return d;
+}
+
+/* Pick my poison */
+var MK={grine:["tearjerker"],twist:["twist ending","plot twist"]};
+var MG={skremt:[27],kos:[10749,10751],spenning:[53,28]};
+var mood=null,svcSel=ls("svc",[]),kwc=ls("kwc",{});
+function kwIds(terms){
+  return Promise.all(terms.map(function(t){
+    if(kwc[t])return kwc[t];
+    return api("/search/keyword",{query:t}).then(function(r){
+      var l=r.results||[],h=l.filter(function(k){return k.name.toLowerCase()===t})[0]||l[0];
+      if(h){kwc[t]=h.id;sv("kwc",kwc)}return h?h.id:null;
+    }).catch(function(){return null});
+  })).then(function(a){return a.filter(Boolean)});
+}
+function addProv(m,c){
+  var p=el("p","meta no","Sjekker strømming …"),b=c.querySelector(".mb");
+  b.insertBefore(p,b.querySelector(".ov"));
+  api("/movie/"+m.id+"/watch/providers").then(function(r){
+    var n=(r.results||{}).NO||{},nm=function(a){return(a||[]).map(function(x){return x.provider_name}).join(", ")};
+    p.textContent=n.flatrate?"Strømmer på: "+nm(n.flatrate):(n.rent||n.buy)?"Ikke på strømming. Kjøp eller leie: "+nm(n.rent||n.buy):"Ikke funnet på strømming i Norge";
+  }).catch(function(){p.textContent=""});
+}
+function pick(rand){
+  var out=$("#out");out.textContent="Panelet tenker …";
+  var base={sort_by:"popularity.desc","vote_count.gte":500,"vote_average.gte":6.3,include_adult:"false"},kp=Promise.resolve([]);
+  if(!rand){
+    if(sel.length)base.with_genres=sel.join("|");
+    if(svcSel.length){base.watch_region="NO";base.with_watch_providers=svcSel.join("|");base.with_watch_monetization_types="flatrate"}
+    if(mood&&MK[mood])kp=kwIds(MK[mood]);
+  }
+  kp.then(function(k){
+    if(!rand&&mood&&MK[mood]&&!k.length)throw{code:"nokw"};
+    if(k.length)base.with_keywords=k.join("|");
+    return api("/discover/movie",Object.assign({page:1},base));
+  }).then(function(r1){
+    var tp=Math.min(r1.total_pages||1,5),reqs=[Promise.resolve(r1)],ids=Object.keys(liked);
+    if(tp>1)reqs.push(api("/discover/movie",Object.assign({page:2+Math.floor(Math.random()*(tp-1))},base)));
+    if(!rand&&ids.length)reqs.push(api("/movie/"+ids[Math.floor(Math.random()*ids.length)]+"/recommendations").catch(function(){return{results:[]}}));
+    return Promise.all(reqs);
+  }).then(function(rs){
+    var seen={},pool=[];
+    rs.forEach(function(r){r.results.forEach(function(m){if(!seen[m.id]&&!liked[m.id]&&!shown[m.id]&&m.poster_path){seen[m.id]=1;pool.push(m)}})});
+    if(!rand&&sel.length)pool=pool.filter(function(m){return m.genre_ids.some(function(x){return sel.indexOf(x)>-1})});
+    if(!rand&&mood&&MG[mood])pool=pool.filter(function(m){return m.genre_ids.some(function(x){return MG[mood].indexOf(x)>-1})});
+    if(!pool.length){out.textContent="Ingen treff. Prøv å løse opp ett av valgene.";return}
+    var p=profile();
+    if(p.n&&!rand)pool.sort(function(a,b){return fit(b,p)-fit(a,p)});
+    var top=pool.slice(0,5),m=top[Math.floor(Math.random()*top.length)];
+    shown[m.id]=1;out.innerHTML="";
+    var c=card(m);out.appendChild(c);addProv(m,c);
+    var b=el("button","btn rnd again","Gi meg et annet forslag");b.onclick=function(){pick(rand)};out.appendChild(b);
+  }).catch(function(e){out.textContent=e&&e.code==="nokw"?"Fant ikke noe TMDB-stikkord for den stemningen. Prøv en annen.":err(e)});
+}
+function loadSvc(){
+  var box=$("#svcchips");
+  api("/watch/providers/movie",{watch_region:"NO"}).then(function(r){
+    var pr=function(x){return x.display_priorities&&x.display_priorities.NO!=null?x.display_priorities.NO:(x.display_priority||999)};
+    var l=(r.results||[]).sort(function(a,b){return pr(a)-pr(b)}).slice(0,10);
+    box.innerHTML="";
+    l.forEach(function(x){
+      var id=x.provider_id,b=el("button","chip",x.provider_name);
+      b.setAttribute("aria-pressed",String(svcSel.indexOf(id)>-1));
+      b.onclick=function(){var i=svcSel.indexOf(id);if(i>-1)svcSel.splice(i,1);else svcSel.push(id);sv("svc",svcSel);b.setAttribute("aria-pressed",String(i<0))};
+      box.appendChild(b);
+    });
+  }).catch(function(e){box.textContent=err(e)});
+}
+$$("#mood .chip").forEach(function(b){
+  b.setAttribute("aria-pressed","false");
+  b.onclick=function(){mood=mood===b.dataset.m?null:b.dataset.m;$$("#mood .chip").forEach(function(c){c.setAttribute("aria-pressed",String(c.dataset.m===mood))})};
+});
+$$("#gen .chip").forEach(function(b){
+  b.setAttribute("aria-pressed","false");
+  b.onclick=function(){var g=+b.dataset.g,i=sel.indexOf(g);if(i>-1)sel.splice(i,1);else sel.push(g);b.setAttribute("aria-pressed",String(i<0))};
+});
+$("#go").onclick=function(){pick(false)};
+$("#rnd").onclick=function(){sel=[];mood=null;$$("#mood .chip,#gen .chip").forEach(function(c){c.setAttribute("aria-pressed","false")});pick(true)};
+
+/* Director's cut */
+function summary(){
+  var p=profile(),s=$("#sum");
+  if(!p.n){s.textContent="Søk opp filmer du har sett og likt, eller trykk på plakatene. Jo flere, desto bedre forslag.";return}
+  var top=Object.keys(p.g).sort(function(a,b){return p.g[b]-p.g[a]}).slice(0,3).map(function(x){return G[x]}).filter(Boolean).join(", ").toLowerCase();
+  s.textContent=p.n+" filmer i samlingen din. Du drar mot "+top+".";
+}
+function renderCut(list){
+  var g=$("#grid");g.innerHTML="";
+  list.forEach(function(m){
+    if(!m.poster_path)return;
+    var b=el("button","pc"),i=el("img");b.dataset.id=m.id;
+    i.src=poster(m);i.alt="";i.loading="lazy";b.appendChild(i);b.appendChild(el("span",null,m.title));
+    b.setAttribute("aria-pressed",String(!!liked[m.id]));
+    b.onclick=function(){
+      if(liked[m.id])delete liked[m.id];else liked[m.id]={t:m.title,g:m.genre_ids||[],p:m.poster_path,release_date:m.release_date};
+      sv("liked",liked);b.setAttribute("aria-pressed",String(!!liked[m.id]));summary();renderMine();
+    };
+    g.appendChild(b);
+  });
+}
+function renderMine(){
+  var ids=Object.keys(liked),g=$("#minegrid");g.innerHTML="";
+  $("#minesum").textContent="Din samling ("+ids.length+")";
+  if(!ids.length){g.textContent="Ingen filmer valgt ennå.";return}
+  ids.forEach(function(id){
+    var m=liked[id],b=el("button","pc"),i=el("img");
+    if(m.p){i.src=IMG+"w185"+m.p;i.alt="";i.loading="lazy";b.appendChild(i)}
+    b.appendChild(el("span",null,m.t));b.setAttribute("aria-pressed","true");
+    b.onclick=function(){delete liked[id];sv("liked",liked);$$("#grid .pc").forEach(function(x){if(x.dataset.id===id)x.setAttribute("aria-pressed","false")});renderMine();summary()};
+    g.appendChild(b);
+  });
+}
+function loadCut(q){
+  var mine=Object.keys(liked).map(function(k){return{id:+k,title:liked[k].t,genre_ids:liked[k].g,poster_path:liked[k].p,release_date:liked[k].release_date}});
+  var req=q?api("/search/movie",{query:q,include_adult:"false"}):api("/movie/top_rated",{page:1+Math.floor(Math.random()*3)});
+  req.then(function(r){
+    var seen={},l=(q?[]:mine).concat(r.results).filter(function(m){if(seen[m.id])return false;seen[m.id]=1;return true});
+    renderCut(l);
+  }).catch(function(e){$("#grid").textContent=err(e)});
+}
+$("#qgo").onclick=function(){loadCut($("#q").value.trim())};
+$("#q").onkeydown=function(e){if(e.key==="Enter")loadCut($("#q").value.trim())};
+
+/* Radar and release */
+var RN={kino:"Kinopremierer de neste to månedene.",strøm:"Populære filmer som har kommet på strømmetjenester de siste fire månedene. TMDB kan ikke liste hva som kommer på strømming, bare hva som allerede er der.",plan:"Filmer som er planlagt lenger frem, opptil halvannet år. Datoene flytter seg ofte."};
+var PR={NO:"8|337|119|1899|350|1773|76",US:"8|337|9|119|1899|350|531|15|386"};
+function relDate(r,cc){
+  var n=(r.results||[]).filter(function(x){return x.iso_3166_1===cc})[0],d=null;
+  if(n)n.release_dates.forEach(function(x){if((x.type===2||x.type===3)&&(!d||x.release_date<d))d=x.release_date});
+  return d?nb(d.slice(0,10)):"ikke datert";
+}
+function loadRadar(){
+  var box=$("#rcards");box.textContent="Henter …";
+  $("#rnote").textContent=RN[rf]+(rr==="US"&&rf!=="strøm"?" Viser amerikanske datoer, med norsk dato under.":"");
+  var pa={sort_by:"popularity.desc",include_adult:"false"};
+  if(rf==="strøm"){pa.watch_region=rr;pa.with_watch_providers=PR[rr];pa.with_watch_monetization_types="flatrate";pa["primary_release_date.gte"]=plus(-120);pa["primary_release_date.lte"]=plus(0)}
+  else{pa.region=rr;pa.with_release_type="2|3";pa["release_date.gte"]=plus(rf==="kino"?0:61);pa["release_date.lte"]=plus(rf==="kino"?60:540)}
+  api("/discover/movie",pa).then(function(r){
+    var l=r.results.slice(0,20),dual=rr==="US"&&rf!=="strøm";
+    if(rf!=="strøm")l.sort(function(a,b){return(a.release_date||"")<(b.release_date||"")?-1:1});
+    box.innerHTML="";if(!l.length)box.textContent="Ingenting funnet.";
+    l.forEach(function(m){
+      var c=card(m,dual);box.appendChild(c);if(rf==="strøm"&&rr==="NO")addProv(m,c);
+      if(!dual)return;
+      var d=el("p","meta no","USA / Norge: …");c.querySelector(".mb").insertBefore(d,c.querySelector(".tags"));
+      api("/movie/"+m.id+"/release_dates").then(function(x){d.textContent="USA: "+relDate(x,"US")+" · Norge: "+relDate(x,"NO")}).catch(function(){d.textContent=""});
+    });
+  }).catch(function(e){box.textContent=err(e)});
+}
+$$("#rreg .chip").forEach(function(b){b.onclick=function(){rr=b.dataset.r;$$("#rreg .chip").forEach(function(c){c.setAttribute("aria-pressed",String(c===b))});loadRadar()}});
+$$("#rfilter .chip").forEach(function(b){b.onclick=function(){rf=b.dataset.f;$$("#rfilter .chip").forEach(function(c){c.setAttribute("aria-pressed",String(c===b))});loadRadar()}});
+
+/* Faner og nøkkel */
+function tab(t){["find","cut","radar"].forEach(function(id){$("#"+id).hidden=id!==t;$("#t-"+id).setAttribute("aria-pressed",String(id===t))});if(t==="cut"&&tok)loadCut("");if(t==="radar")loadRadar()}
+["find","cut","radar"].forEach(function(id){$("#t-"+id).onclick=function(){tab(id)}});
+$("#gear").onclick=function(){$("#set").hidden=!$("#set").hidden};
+$("#savekey").onclick=function(){var v=$("#key").value.trim();if(!v)return;tok=v;sv("tok",v);$("#key").value="";$("#keymsg").textContent="Lagret i denne nettleseren.";$("#set").hidden=true;loadSvc()};
+$("#clearkey").onclick=function(){tok="";sv("tok","");$("#keymsg").textContent="Fjernet."};
+if(!tok)$("#set").hidden=false;
+if(tok)loadSvc();
+summary();renderMine();
+</script>
+</body>
+</html>
